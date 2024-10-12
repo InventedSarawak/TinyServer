@@ -15,7 +15,7 @@
 To get started with **TinyServer**, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/TinyServer.git
+git clone https://github.com/InventedSarawak/TinyServer.git
 cd TinyServer
 ```
 
