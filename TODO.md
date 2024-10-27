@@ -7,14 +7,14 @@
   - [ ] Body (optional, for methods like POST)
 
 ## 2. Set Up Networking (Sockets)
-- [ ] Learn socket programming in your chosen language (C, Python, etc.).
-- [ ] Create a TCP/IP socket:
-  - [ ] Use `socket()` to create a socket.
-  - [ ] Use `bind()` to bind the socket to a port and IP address.
-  - [ ] Use `listen()` to allow the server to accept incoming connections.
+- [x] Learn socket programming in your chosen language (C, Python, etc.).
+- [x] Create a TCP/IP socket:
+  - [x] Use `socket()` to create a socket.
+  - [x] Use `bind()` to bind the socket to a port and IP address.
+  - [x] Use `listen()` to allow the server to accept incoming connections.
 
 ## 3. Accept Incoming Connections
-- [ ] Use `accept()` to accept incoming connections from clients (browsers, curl, etc.).
+- [x] Use `accept()` to accept incoming connections from clients (browsers, curl, etc.).
 - [ ] Use a new socket for each connection to communicate with the client.
 
 ## 4. Read the HTTP Request
@@ -42,8 +42,8 @@
   - [ ] Handle form submissions or data sent by the client.
 
 ## 8. Close the Connection
-- [ ] Close the connection after sending the response (or keep it open for persistent connections).
-- [ ] For non-persistent connections, close the socket after the response.
+- [x] Close the connection after sending the response (or keep it open for persistent connections).
+- [x] For non-persistent connections, close the socket after the response.
 
 ## 9. Basic Error Handling
 - [ ] Handle common errors:
