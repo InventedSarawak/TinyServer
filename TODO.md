@@ -15,7 +15,7 @@
 
 ## 3. Accept Incoming Connections
 - [x] Use `accept()` to accept incoming connections from clients (browsers, curl, etc.).
-- [ ] Use a new socket for each connection to communicate with the client.
+- [x] Use a new socket for each connection to communicate with the client.
 
 ## 4. Read the HTTP Request
 - [ ] After accepting a connection, read the HTTP request sent by the client.

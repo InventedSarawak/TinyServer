@@ -7,8 +7,8 @@ SERVER_TARGET = tcp_server
 CLIENT_TARGET = tcp_client
 
 # Source files
-SERVER_SRC = Messaging/$(SERVER_TARGET).c
-CLIENT_SRC = Messaging/$(CLIENT_TARGET).c
+SERVER_SRC = messaging/$(SERVER_TARGET).c
+CLIENT_SRC = messaging/$(CLIENT_TARGET).c
 
 # Run 'make' to compile all targets
 .PHONY: all clean run_server run_client
