@@ -10,7 +10,4 @@
 #define MAX_BUFFER_SIZE 1024
 #define SA struct sockaddr
 
-int main(int argc, char *argv[]) {
-    
-}
 
