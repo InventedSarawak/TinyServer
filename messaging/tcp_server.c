@@ -16,6 +16,7 @@
 #include <pthread.h>            // POSIX threads library
 #include <stdint.h>             // Standard integer types
 #include <semaphore.h>          // POSIX semaphore library
+#include <signal.h>             // Signal handling library
 
 #define MAX_BUFFER_SIZE 1024
 #define SA struct sockaddr
@@ -252,3 +253,37 @@ void close_sockets(int newsockfd, int sockfd) {
     close(sockfd);
     printf("Sockets closed\n");
 }
+
+
+// implement the sigint handler
+/*
+#include  <stdio.h>
+#include  <signal.h>
+#include  <stdlib.h>
+
+void     INThandler(int);
+
+int  main(void)
+{
+     signal(SIGINT, INThandler);
+     while (1)
+          pause();
+          
+     return 0;
+}
+
+void  INThandler(int sig)
+{
+     char  c;
+
+     signal(sig, SIG_IGN);
+     printf("OUCH, did you hit Ctrl-C?\n"
+            "Do you really want to quit? [y/n] ");
+     c = getchar();
+     if (c == 'y' || c == 'Y')
+          exit(0);
+     else
+          signal(SIGINT, INThandler);
+     getchar(); // Get new line character
+}
+*/
