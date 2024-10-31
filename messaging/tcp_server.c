@@ -16,6 +16,7 @@
 #include <pthread.h>            // POSIX threads library
 #include <stdint.h>             // Standard integer types
 #include <semaphore.h>          // POSIX semaphore library
+#include <signal.h>             // POSIX signal library
 
 #define MAX_BUFFER_SIZE 1024
 #define SA struct sockaddr
@@ -34,6 +35,7 @@ void listen_for_connections(int sockfd);
 int accept_connection(int sockfd, SA_IN *cli_addr);
 void *receive_message(void *newsockfd_ptr);
 void close_sockets(int newsockfd, int sockfd);
+// void int_handler(int sig);
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -42,8 +44,14 @@ int main(int argc, char *argv[]) {
     }
     pthread_mutex_init(&clients_mutex, NULL);
     int portno = atoi(argv[1]); // Get the port number
-    int sockfd, newsockfd;
     SA_IN serv_addr, cli_addr;
+    int sockfd, newsockfd; // File descriptors
+
+    // Handle the SIGINT signal
+    // signal(SIGINT, int_handler);
+    // while (1) {
+    //       pause();
+    // }
 
     // Create a socket
     sockfd = create_socket();
@@ -74,7 +82,10 @@ int main(int argc, char *argv[]) {
 
     // Close the listening socket (not reached in this example)
     close_sockets(sockfd, sockfd);
-    
+
+    // Close the mutex
+    pthread_mutex_destroy(&clients_mutex);
+
     return 0;
 }
 
@@ -252,3 +263,28 @@ void close_sockets(int newsockfd, int sockfd) {
     close(sockfd);
     printf("Sockets closed\n");
 }
+
+/**
+ * Handles the SIGINT signal (e.g., Ctrl+C) for graceful server shutdown.
+ *
+ * This function is called when the SIGINT signal is received. It prompts
+ * the user to confirm if they wish to stop the server. If confirmed,
+ * it closes both the new socket and the listening socket to free up
+ * system resources and exits the program. If not confirmed, the signal
+ * handler is reset to continue listening for SIGINT.
+ *
+ * @param sig The signal number (e.g., SIGINT).
+ * @param newsockfd The file descriptor of the new socket created by accept().
+ * @param sockfd The file descriptor of the original socket used for listening.
+ */
+// void int_handler(int sig) {
+//     char ch;
+//     signal(sig, SIG_IGN);
+//     printf("Do you want to stop the server? (y/n) : ");
+//     ch = getchar();
+//     if (ch == 'y' || ch == 'Y') {
+//         close_sockets(newsockfd, sockfd);
+//         exit(0);
+//     } else signal(SIGINT, int_handler);
+//     getchar();
+// }
