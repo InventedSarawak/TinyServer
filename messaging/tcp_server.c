@@ -23,9 +23,10 @@
 #define SA_IN struct sockaddr_in
 #define MAX_CLIENTS 10
 
-int client_sockets[MAX_CLIENTS]; // Array to hold client sockets
-int client_count = 0; // Number of active clients
-pthread_mutex_t clients_mutex; // Mutex for thread-safe access to client list
+int client_sockets[MAX_CLIENTS];                // Array to hold client sockets
+int client_count = 0;                           // Number of active clients
+pthread_mutex_t clients_mutex;                  // Mutex for thread-safe access to client list
+int sockfd, newsockfd = -1;                     // Server and client socket file descriptors
 
 void error(const char *msg);
 int create_socket();
@@ -35,6 +36,7 @@ void listen_for_connections(int sockfd);
 int accept_connection(int sockfd, SA_IN *cli_addr);
 void *receive_message(void *newsockfd_ptr);
 void close_sockets(int newsockfd, int sockfd);
+void sig_int_handler(int sig);  // Function prototype first
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -43,8 +45,17 @@ int main(int argc, char *argv[]) {
     }
     pthread_mutex_init(&clients_mutex, NULL);
     int portno = atoi(argv[1]); // Get the port number
-    int sockfd, newsockfd;
     SA_IN serv_addr, cli_addr;
+
+    // Set up signal handler
+    struct sigaction sa;
+    sa.sa_handler = sig_int_handler;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
+    }
 
     // Create a socket
     sockfd = create_socket();
@@ -60,6 +71,7 @@ int main(int argc, char *argv[]) {
 
     // Accept connections in a loop
     while (1) {
+        // Accept a new connection
         newsockfd = accept_connection(sockfd, &cli_addr);
         
         // Create a thread for each client
@@ -72,10 +84,6 @@ int main(int argc, char *argv[]) {
         // Detach the thread so that its resources are released when it finishes
         pthread_detach(client_thread);
     }
-
-    // Close the listening socket (not reached in this example)
-    close_sockets(sockfd, sockfd);
-    
     return 0;
 }
 
@@ -135,10 +143,8 @@ void bind_socket(int sockfd, SA_IN serv_addr) {
  */
 void listen_for_connections(int sockfd) {
     listen(sockfd, MAX_CLIENTS); // Maximum number of queued connections
-    printf("Listening for connections...\n");
+    printf("Listening for connections\n" "\n" "Waiting for incoming connections..." "\n");
 }
-
-
 
 /**
  * Accepts an incoming connection on the specified socket.
@@ -165,7 +171,14 @@ int accept_connection(int sockfd, SA_IN *cli_addr) {
     return newsockfd;
 }
 
-
+/**
+ * Reads a message from the user and sends it to the client over the specified socket.
+ *
+ * The user is prompted to enter a message, which is then sent to the client using
+ * the write() system call. If the write fails, an error is printed to the console.
+ *
+ * @param sockfd The file descriptor of the socket to write to.
+ */
 void send_message(int sockfd) {
     char message[MAX_BUFFER_SIZE]; // Buffer to hold the message
     printf("Sent: ");
@@ -175,7 +188,6 @@ void send_message(int sockfd) {
     // Send the message
     if (write(sockfd, message, strlen(message)) < 0) error("ERROR writing to socket"); 
 }
-
 
 /**
  * Handles an incoming connection from a client in a separate thread.
@@ -235,11 +247,9 @@ void *receive_message(void *newsockfd_ptr) {
         }
     }
     pthread_mutex_unlock(&clients_mutex); // Unlock the mutex
-
     close(newsockfd);
     return NULL;
 }
-
 
 /**
  * Closes both the new socket (created by accept()) and the original socket
@@ -251,39 +261,30 @@ void *receive_message(void *newsockfd_ptr) {
 void close_sockets(int newsockfd, int sockfd) {
     close(newsockfd);
     close(sockfd);
-    printf("Sockets closed\n");
+    printf("\n" "Sockets closed" "\n");
 }
 
-
-// implement the sigint handler
-/*
-#include  <stdio.h>
-#include  <signal.h>
-#include  <stdlib.h>
-
-void     INThandler(int);
-
-int  main(void)
-{
-     signal(SIGINT, INThandler);
-     while (1)
-          pause();
-          
-     return 0;
+/**
+ * Handles the SIGINT signal (Ctrl+C) by closing all connections and exiting the program.
+ *
+ * This function is called when the user presses Ctrl+C while the server is running.
+ * It closes all the sockets and prints a message to the console before exiting the program.
+ *
+ * @param sig The signal number (SIGINT) that was raised
+ */
+void sig_int_handler(int sig) {
+    printf("\b\b  \b\b");
+    int i = 0;
+    signal(sig, SIG_IGN);
+    printf("Closing the server and all connections" "\n");
+    while (i < 3) {
+        usleep(400000);
+        printf(".");
+        fflush(stdout);
+        i++;
+        if (i == 3) usleep(300000);
+    }
+    close_sockets(sockfd, sockfd);
+    printf("Server closed");
+    exit(0);
 }
-
-void  INThandler(int sig)
-{
-     char  c;
-
-     signal(sig, SIG_IGN);
-     printf("OUCH, did you hit Ctrl-C?\n"
-            "Do you really want to quit? [y/n] ");
-     c = getchar();
-     if (c == 'y' || c == 'Y')
-          exit(0);
-     else
-          signal(SIGINT, INThandler);
-     getchar(); // Get new line character
-}
-*/

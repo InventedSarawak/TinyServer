@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -std=gnu17
 
 # Target executables
 SERVER_TARGET = tcp_server
