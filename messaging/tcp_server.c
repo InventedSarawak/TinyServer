@@ -17,6 +17,7 @@
 #include <stdint.h>             // Standard integer types
 #include <semaphore.h>          // POSIX semaphore library
 #include <signal.h>             // Signal handling library
+#include <time.h>               // Time library
 
 #define MAX_BUFFER_SIZE 1024
 #define SA struct sockaddr
@@ -27,6 +28,7 @@ int client_sockets[MAX_CLIENTS];                // Array to hold client sockets
 int client_count = 0;                           // Number of active clients
 pthread_mutex_t clients_mutex;                  // Mutex for thread-safe access to client list
 int sockfd, newsockfd = -1;                     // Server and client socket file descriptors
+time_t start_time, end_time;                    // Will help to find the idle time of the server
 
 void error(const char *msg);
 int create_socket();
