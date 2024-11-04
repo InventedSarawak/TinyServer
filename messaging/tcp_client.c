@@ -127,7 +127,6 @@ void connect_socket(int sockfd, SA_IN serv_addr) {
     else printf("Connected successfully\n");
 }
 
-
 /**
  * Reads a message from the user and sends it to the server over the specified socket.
  *
@@ -145,8 +144,6 @@ void send_message(int sockfd) {
     // Send the message
     if (write(sockfd, message, strlen(message)) < 0) error("ERROR writing to socket"); 
 }
- 
-
 
 /**
  * Receives and handles messages from the server through the specified socket.
@@ -193,8 +190,6 @@ void receive_message(int sockfd) {
         send_message(sockfd);
     }
 }
-
-
 
 /**
  * Closes a socket to free up system resources.

@@ -143,7 +143,7 @@ void bind_socket(int sockfd, SA_IN serv_addr) {
  */
 void listen_for_connections(int sockfd) {
     listen(sockfd, MAX_CLIENTS); // Maximum number of queued connections
-    printf("Listening for connections\n" "\n" "Waiting for incoming connections..." "\n");
+    printf("Listening for connections\n" "Waiting for incoming connections..." "\n");
 }
 
 /**
